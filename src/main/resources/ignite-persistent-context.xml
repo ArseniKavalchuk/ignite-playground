@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+        
+    <context:property-placeholder location="classpath:application.properties" />
+
+    <bean id="memoryConfiguration" class="org.apache.ignite.configuration.MemoryConfiguration">
+        <property name="concurrencyLevel" value="8" />
+        <property name="pageSize" value="2048" />
+        <property name="memoryPolicies">
+            <list>
+                <bean class="org.apache.ignite.configuration.MemoryPolicyConfiguration">
+                    <property name="name" value="512MB_Region_Policy" />
+                    <property name="metricsEnabled" value="false" />
+                    <property name="emptyPagesPoolSize" value="2048" />
+                    <property name="initialSize" value="#{512L * 1024 * 1024}" />
+                    <property name="maxSize" value="#{ 2L * 1024 * 1024 * 1024}" />
+                    <property name="pageEvictionMode" value="DISABLED" />
+                    <property name="evictionThreshold" value="0.90" />
+                </bean>
+                <bean class="org.apache.ignite.configuration.MemoryPolicyConfiguration">
+                    <property name="name" value="default" />
+                    <property name="metricsEnabled" value="false" />
+                    <property name="emptyPagesPoolSize" value="1024" />
+                    <property name="initialSize" value="#{64L * 1024 * 1024}" />
+                    <property name="maxSize" value="#{128L * 1024 * 1024}" />
+                    <property name="pageEvictionMode" value="DISABLED" />
+                    <property name="evictionThreshold" value="0.90" />
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="igniteConfigBase" abstract="true">
+        <!-- <property name="igniteInstanceName" value="#{ T(ru.synesis.kipod.utils.Hostname).get() }" />  -->
+        <property name="peerClassLoadingEnabled" value="false" />
+        <property name="metricsLogFrequency" value="0" />
+        <property name="clientFailureDetectionTimeout" value="#{ 1L * 60 * 1000 }" />
+        <property name="failureDetectionTimeout" value="#{ 1L * 60 * 1000 }" />
+        
+        <!-- set pool sizes because in k8s env Runtime.getRuntime().availableProcessors() returns incorrect value -->
+        <property name="publicThreadPoolSize" value="8" />
+        <property name="serviceThreadPoolSize" value="8" />
+        <property name="systemThreadPoolSize" value="8" />
+        <property name="asyncCallbackPoolSize" value="8" />
+        <property name="managementThreadPoolSize" value="4" />
+        <property name="peerClassLoadingThreadPoolSize" value="2" />
+        <property name="igfsThreadPoolSize" value="4" />
+        <property name="dataStreamerThreadPoolSize" value="2" />
+        <property name="utilityCachePoolSize" value="4" />
+        <property name="queryThreadPoolSize" value="8" />
+        
+        <property name="gridLogger">
+            <bean class="org.apache.ignite.logger.slf4j.Slf4jLogger" />
+        </property>
+
+        <property name="marshaller">
+            <bean class="org.apache.ignite.internal.binary.BinaryMarshaller" />
+        </property>
+
+        <property name="memoryConfiguration" ref="memoryConfiguration" />
+        
+        <property name="discoverySpi">
+            <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+                <property name="ipFinder">
+                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder">
+                        <property name="multicastGroup" value="228.10.10.157"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        
+        <property name="communicationSpi">
+            <bean id="communicationSpi" class="org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi" />
+        </property>
+        
+    </bean>
+
+    <!-- 
+    <bean id="persConf" class="org.apache.ignite.configuration.PersistentStoreConfiguration">
+        <property name="walMode" value="BACKGROUND" />
+        <property name="walFlushFrequency" value="5000" />
+    </bean>
+    -->
+
+    <bean id="persConf" class="org.apache.ignite.configuration.PersistentStoreConfiguration">
+        <property name="walMode" value="BACKGROUND" />
+        <property name="walFlushFrequency" value="5000" />
+        <property name="walHistorySize" value="3" />
+        <property name="checkpointingPageBufferSize" value="#{ 512L * 1024 * 1024 }" />
+        <property name="checkpointingFrequency" value="30000" />
+    </bean>
+
+    <bean id="igniteCfg1" class="org.apache.ignite.configuration.IgniteConfiguration" parent="igniteConfigBase">
+        <property name="igniteInstanceName" value="server1" />
+        <property name="workDirectory" value="#{ systemProperties['user.home'] + '/ignite-cache-1' }"/>
+        <property name="persistentStoreConfiguration" ref="persConf" />
+    </bean>
+
+    <bean id="igniteCfg2" class="org.apache.ignite.configuration.IgniteConfiguration" parent="igniteConfigBase">
+        <property name="igniteInstanceName" value="server2" />
+        <property name="workDirectory" value="#{ systemProperties['user.home'] + '/ignite-cache-2' }"/>
+        <property name="persistentStoreConfiguration" ref="persConf" />
+    </bean>
+
+    <bean id="igniteCfg3" class="org.apache.ignite.configuration.IgniteConfiguration" parent="igniteConfigBase">
+        <property name="igniteInstanceName" value="client1" />
+        <property name="clientMode" value="true" />
+    </bean>
+ 
+</beans>

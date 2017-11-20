@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+
+    compile "org.springframework.boot:spring-boot-starter"
+    compile "org.apache.ignite:ignite-core:${ignite_version}"
+    compile "org.apache.ignite:ignite-spring:${ignite_version}"
+    compile "org.apache.ignite:ignite-indexing:${ignite_version}"
+    compile "org.apache.ignite:ignite-slf4j:${ignite_version}"
+    compile "org.apache.ignite:ignite-kubernetes:${ignite_version}"
+    
+    testCompile 'junit:junit:4.12'
+    testCompile "org.springframework.boot:spring-boot-starter-test"
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
