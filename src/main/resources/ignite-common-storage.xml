@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="dataStorageConfiguration" class="org.apache.ignite.configuration.DataStorageConfiguration">
+        <property name="concurrencyLevel" value="8" />
+        
+        <property name="pageSize" value="4096" />
+        <property name="walMode" value="BACKGROUND" />
+        <property name="walSegmentSize" value="#{256L * 1024 * 1024}" />
+        <property name="walHistorySize" value="5" />
+        <property name="walFlushFrequency" value="10000" />
+
+        <property name="defaultDataRegionConfiguration">
+            <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                <property name="name" value="default" />
+                <property name="persistenceEnabled" value="true"/>
+                <property name="metricsEnabled" value="false" />
+                <property name="emptyPagesPoolSize" value="2048" />
+                <property name="initialSize" value="#{64L * 1024 * 1024}" />
+                <property name="maxSize" value="#{512L * 1024 * 1024}" />
+                <property name="pageEvictionMode" value="RANDOM_2_LRU" />
+                <property name="evictionThreshold" value="0.85" />
+                <property name="checkpointPageBufferSize" value="#{1024L * 1024 * 1024}" />
+            </bean>
+        </property>
+        <property name="dataRegionConfigurations">
+            <list>
+                <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                    <property name="name" value="2G_Region_Eviction" />
+                    <property name="persistenceEnabled" value="true"/>
+                    <property name="metricsEnabled" value="false" />
+                    <property name="emptyPagesPoolSize" value="2048" />
+                    <property name="initialSize" value="#{1L * 1024 * 1024 * 1024}" />
+                    <property name="maxSize" value="#{2L * 1024 * 1024 * 1024}" />
+                    <property name="pageEvictionMode" value="RANDOM_2_LRU" />
+                    <property name="evictionThreshold" value="0.85" />
+                    <property name="checkpointPageBufferSize" value="#{1024L * 1024 * 1024}" />
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+</beans>

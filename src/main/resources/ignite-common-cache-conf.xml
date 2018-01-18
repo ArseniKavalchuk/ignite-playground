@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+        
+        <bean id="commonCacheConfig" abstract="true">
+            <property name="statisticsEnabled"  value="true" />
+            <property name="atomicityMode"      value="ATOMIC" />
+            <property name="rebalanceMode"      value="ASYNC" />
+            <property name="rebalanceThrottle"  value="500" />
+            <property name="rebalanceBatchSize" value="#{5 * 1024 * 1024}" />
+            <property name="backups"            value="0" />
+            <property name="copyOnRead"         value="false" />
+            <property name="storeByValue"       value="false" />
+            <property name="dataRegionName"     value="2G_Region_Eviction" />
+            <property name="onheapCacheEnabled" value="false" />
+        </bean>
+        
+        <bean id="faceEventCacheConfig" class="org.apache.ignite.configuration.CacheConfiguration" parent="commonCacheConfig">
+            <property name="name" value="face_events" />
+            <property name="queryEntities">
+                <list>
+                    <ref bean="faceEvent" />
+                </list>
+            </property>
+            <property name="sqlFunctionClasses">
+                <list>
+                    <value>ru.synesis.kipod.facematch.sql.DescriptorMatchers</value>
+                </list>
+            </property>
+        </bean>
+        
+        <bean id="kipodEventCacheConfig" class="org.apache.ignite.configuration.CacheConfiguration" parent="commonCacheConfig">
+            <property name="name" value="kipod_events" />
+            <property name="queryEntities">
+                <list>
+                    <ref bean="kipodEvent" />
+                </list>
+            </property>
+        </bean>
+    
+ </beans>

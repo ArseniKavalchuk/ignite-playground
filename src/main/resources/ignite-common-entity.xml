@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+        
+    <bean id="kipodEvent" class="org.apache.ignite.cache.QueryEntity">
+        <!-- Setting indexed type's key class -->
+        <property name="keyType" value="java.lang.String"/>
+        <!-- Setting indexed type's value class -->
+        <property name="valueType" value="ru.synesis.kipod.event.KipodEvent"/>
+        <!-- Defining fields that will be either indexed or queryable. Indexed fields are added to 'indexes' list below.-->
+        <property name="fields">
+            <map>
+                <entry key="id"                         value="java.lang.Long"/>
+                <entry key="topic"                      value="java.lang.String"/>
+                <entry key="module"                     value="java.lang.String"/>
+                <entry key="level"                      value="java.lang.Integer"/>
+                <entry key="source"                     value="java.lang.String"/>
+                <entry key="start_time"                 value="java.lang.Long"/>
+                <entry key="end_time"                   value="java.lang.Long"/>
+                <entry key="channel"                    value="java.lang.Long"/>
+                <entry key="stream"                     value="java.lang.Long"/>
+                <entry key="alarm"                      value="java.lang.Boolean"/>
+                <entry key="processed"                  value="java.lang.Boolean"/>
+                <entry key="comment"                    value="java.lang.String"/>
+                <entry key="armed"                      value="java.lang.Boolean"/>
+                <entry key="persistent"                 value="java.lang.Boolean"/>
+                <entry key="commented_at"               value="java.lang.Long"/>
+                <entry key="processed_at"               value="java.lang.Long"/>
+                <entry key="kafka_offset"               value="java.lang.Long"/>
+                <entry key="expiration"                 value="java.lang.Long"/>
+                <entry key="license_plate_country"      value="java.lang.String"/>
+                <entry key="license_plate_number"       value="java.lang.String"/>
+                <entry key="license_plate_first_name"   value="java.lang.String"/>
+                <entry key="license_plate_last_name"    value="java.lang.String"/>
+                <entry key="license_plate_lists"        value="[Ljava.lang.Integer;"/>
+                <entry key="face_list_id"               value="java.lang.Long"/>
+                <entry key="face_id"                    value="java.lang.Long"/>
+                <entry key="face_first_name"            value="java.lang.String"/>
+                <entry key="face_last_name"             value="java.lang.String"/>
+                <entry key="face_full_name"             value="java.lang.String"/>
+                <entry key="face_similarity"            value="java.lang.Float"/>
+                <entry key="detected_face_event_id"     value="java.lang.String"/>
+            </map>
+        </property>
+        <property name="indexes">
+            <list>
+                <bean class="org.apache.ignite.cache.QueryIndex">
+                    <constructor-arg>
+                        <map>
+                            <entry key="start_time" value="false" />
+                            <entry key="channel" value="true" />
+                        </map>
+                    </constructor-arg>
+                    <constructor-arg value="SORTED"/>
+                </bean>
+                <bean class="org.apache.ignite.cache.QueryIndex">
+                    <constructor-arg>
+                        <map>
+                            <entry key="start_time" value="true" />
+                            <entry key="channel" value="true" />
+                        </map>
+                    </constructor-arg>
+                    <constructor-arg value="SORTED"/>
+                </bean>
+                <bean class="org.apache.ignite.cache.QueryIndex">
+                    <constructor-arg value="start_time"/>
+                    <constructor-arg value="false"/>
+                </bean>
+                <bean class="org.apache.ignite.cache.QueryIndex">
+                    <constructor-arg value="start_time"/>
+                    <constructor-arg value="true"/>
+                </bean>
+                <bean class="org.apache.ignite.cache.QueryIndex">
+                    <constructor-arg value="channel" />
+                </bean>
+                <bean class="org.apache.ignite.cache.QueryIndex">
+                    <constructor-arg value="topic" />
+                </bean>
+                <bean class="org.apache.ignite.cache.QueryIndex">
+                    <constructor-arg value="license_plate_number" />
+                </bean>
+                <bean class="org.apache.ignite.cache.QueryIndex">
+                    <constructor-arg value="license_plate_first_name" />
+                </bean>
+                <bean class="org.apache.ignite.cache.QueryIndex">
+                    <constructor-arg value="license_plate_last_name" />
+                </bean>
+                <bean class="org.apache.ignite.cache.QueryIndex">
+                    <constructor-arg value="face_list_id" />
+                </bean>
+                <bean class="org.apache.ignite.cache.QueryIndex">
+                    <constructor-arg value="face_first_name" />
+                </bean>
+                <bean class="org.apache.ignite.cache.QueryIndex">
+                    <constructor-arg value="face_last_name" />
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="faceEvent" class="org.apache.ignite.cache.QueryEntity">
+        <!-- Setting indexed type's key class -->
+        <property name="keyType" value="java.lang.String" />
+        <!-- Setting indexed type's value class -->
+        <property name="valueType" value="ru.synesis.kipod.event.FaceKipodEvent" />
+        <!-- Defining fields that will be either indexed or queryable. Indexed fields are added to 'indexes' list below. -->
+        <property name="fields">
+            <map>
+                <entry key="id"                 value="java.lang.Long" />
+                <entry key="start_time"         value="java.lang.Long" />
+                <entry key="channel"            value="java.lang.Long" />
+                <entry key="kafka_offset"       value="java.lang.Long" />
+                <entry key="expiration"         value="java.lang.Long"/>
+                <entry key="descriptor_version" value="java.lang.String" />
+                <entry key="descriptors"        value="java.util.List" />
+            </map>
+        </property>
+        <property name="indexes">
+            <list>
+                <bean class="org.apache.ignite.cache.QueryIndex">
+                    <constructor-arg value="start_time"/>
+                    <constructor-arg value="false"/>
+                    <constructor-arg value="start_time_desc"/>
+                </bean>
+                <bean class="org.apache.ignite.cache.QueryIndex">
+                    <constructor-arg value="start_time"/>
+                    <constructor-arg value="true"/>
+                    <constructor-arg value="start_time_asc"/>
+                </bean>
+                <bean class="ru.synesis.kipod.facematch.sql.QueryIndexEx">
+                    <constructor-arg>
+                        <map>
+                            <entry key="start_time" value="false" />
+                            <entry key="channel" value="true" />
+                        </map>
+                    </constructor-arg>
+                    <constructor-arg value="SORTED"/>
+                    <constructor-arg value="start_time_desc_channel_asc"/>
+                </bean>
+                <bean class="ru.synesis.kipod.facematch.sql.QueryIndexEx">
+                    <constructor-arg>
+                        <map>
+                            <entry key="start_time" value="true" />
+                            <entry key="channel" value="true" />
+                        </map>
+                    </constructor-arg>
+                    <constructor-arg value="SORTED"/>
+                    <constructor-arg value="start_time_asc_channel_asc"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+ </beans>

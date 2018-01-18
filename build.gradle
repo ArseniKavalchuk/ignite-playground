@@ -1,9 +1,9 @@
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE")
     }
 }
 
@@ -11,26 +11,41 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 
-repositories {
-    jcenter()
+jar {
+    baseName = 'ignite-playground'
+    version =  '0.1.0'
 }
 
-dependencies {
+repositories {
+    mavenCentral()
+}
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+dependencies {
+    compile "log4j:log4j:${log4j_version}"
+    compile "com.h2database:h2:${h2_version}"
+    compile "com.googlecode.json-simple:json-simple:${simple_json_version}"
+    compile "com.google.code.gson:gson:${gson_version}"
+    compile "com.google.guava:guava:${guava_version}"
     compile "org.springframework.boot:spring-boot-starter"
     compile "org.apache.ignite:ignite-core:${ignite_version}"
     compile "org.apache.ignite:ignite-spring:${ignite_version}"
     compile "org.apache.ignite:ignite-indexing:${ignite_version}"
     compile "org.apache.ignite:ignite-slf4j:${ignite_version}"
-    compile "org.apache.ignite:ignite-kubernetes:${ignite_version}"
-    
-    testCompile 'junit:junit:4.12'
+
+    compile ("org.apache.ignite:ignite-kafka:${ignite_version}") {
+        exclude group: 'ch.qos.logback', module: 'logback-classic'
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'log4j', module: 'log4j'
+    }
+
+    testCompile "junit:junit"
     testCompile "org.springframework.boot:spring-boot-starter-test"
 }
 
-compileJava.options.encoding = 'UTF-8'
-compileTestJava.options.encoding = 'UTF-8'
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.5'
+}

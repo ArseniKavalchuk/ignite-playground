@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="igniteConfigBase" abstract="true">
+        <property name="igniteInstanceName" value="#{systemEnvironment['HOSTNAME']}" />
+        <property name="peerClassLoadingEnabled" value="true" />
+        <property name="metricsLogFrequency" value="0" />
+        <property name="clientFailureDetectionTimeout" value="#{ 1L * 60 * 1000 }" />
+        <property name="failureDetectionTimeout" value="#{ 1L * 60 * 1000 }" />
+        
+        <!-- set pool sizes because in k8s env Runtime.getRuntime().availableProcessors() returns incorrect value -->
+        <property name="systemThreadPoolSize"           value="8" />
+        <property name="publicThreadPoolSize"           value="8" />
+        <property name="queryThreadPoolSize"            value="8" />
+        <property name="serviceThreadPoolSize"          value="8" />
+        <property name="stripedPoolSize"                value="8" />
+        <property name="dataStreamerThreadPoolSize"     value="8" />
+        <property name="asyncCallbackPoolSize"          value="8" />
+        <property name="managementThreadPoolSize"       value="4" />
+        <property name="peerClassLoadingThreadPoolSize" value="4" />
+        <property name="igfsThreadPoolSize"             value="4" />
+        <property name="utilityCachePoolSize"           value="4" />
+        <property name="connectorConfiguration">
+            <bean class="org.apache.ignite.configuration.ConnectorConfiguration">
+                <property name="selectorCount" value="4" />
+                <property name="threadPoolSize" value="8" />
+            </bean>
+        </property>
+        <property name="gridLogger">
+            <bean class="org.apache.ignite.logger.slf4j.Slf4jLogger" />
+        </property>
+        <property name="dataStorageConfiguration" ref="dataStorageConfiguration" />
+    </bean>
+
+</beans>

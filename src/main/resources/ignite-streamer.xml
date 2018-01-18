@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="igniteSrv1" class="org.apache.ignite.configuration.IgniteConfiguration" parent="igniteConfigBase">
+        <property name="igniteInstanceName" value="server1" />
+        <property name="consistentId" value="server1" />
+        <property name="workDirectory" value="#{ systemProperties['user.home'] + '/ignite-work/ignite-srv-1' }" />
+        <property name="discoverySpi">
+            <bean parent="discoverySpi" />
+        </property>
+        <property name="communicationSpi">
+             <bean class="org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi" />
+        </property>
+    </bean>
+
+    <bean id="igniteSrv2" class="org.apache.ignite.configuration.IgniteConfiguration" parent="igniteConfigBase">
+        <property name="igniteInstanceName" value="server2" />
+        <property name="consistentId" value="server2" />
+        <property name="workDirectory" value="#{ systemProperties['user.home'] + '/ignite-work/ignite-srv-2' }" />
+        <property name="discoverySpi">
+            <bean parent="discoverySpi" />
+        </property>
+        <property name="communicationSpi">
+            <bean class="org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi" />
+        </property>
+    </bean>
+
+    <bean id="igniteClient1" class="org.apache.ignite.configuration.IgniteConfiguration" parent="igniteConfigBase">
+        <property name="igniteInstanceName" value="client1" />
+        <property name="workDirectory" value="#{ systemProperties['user.home'] + '/ignite-work/client-1' }" />
+        <property name="clientMode" value="true" />
+        <property name="discoverySpi">
+            <bean parent="discoverySpi" />
+        </property>
+        <property name="communicationSpi">
+            <bean class="org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi" />
+        </property>
+    </bean>
+    
+</beans>
