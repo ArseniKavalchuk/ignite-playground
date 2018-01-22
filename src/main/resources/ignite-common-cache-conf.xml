@@ -42,6 +42,14 @@
                     <ref bean="kipodEvent" />
                 </list>
             </property>
+            <property name="keyConfiguration">
+                <list>
+                    <bean class="org.apache.ignite.cache.CacheKeyConfiguration">
+                        <constructor-arg index="0" value="ru.synesis.kipod.event.KipodEvent" />
+                        <constructor-arg index="1" value="start_time" />
+                    </bean>
+                </list>
+            </property>
         </bean>
     
  </beans>

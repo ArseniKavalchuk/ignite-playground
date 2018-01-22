@@ -9,7 +9,6 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="igniteConfigBase" abstract="true">
-        <property name="igniteInstanceName" value="#{systemEnvironment['HOSTNAME']}" />
         <property name="peerClassLoadingEnabled" value="true" />
         <property name="metricsLogFrequency" value="0" />
         <property name="clientFailureDetectionTimeout" value="#{ 1L * 60 * 1000 }" />

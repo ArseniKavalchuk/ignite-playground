@@ -11,11 +11,12 @@
     <bean id="dataStorageConfiguration" class="org.apache.ignite.configuration.DataStorageConfiguration">
         <property name="concurrencyLevel" value="8" />
         
-        <property name="pageSize" value="4096" />
+        <property name="pageSize" value="8192" />
         <property name="walMode" value="BACKGROUND" />
         <property name="walSegmentSize" value="#{256L * 1024 * 1024}" />
         <property name="walHistorySize" value="5" />
         <property name="walFlushFrequency" value="10000" />
+        <property name="checkpointFrequency" value="30000" />
 
         <property name="defaultDataRegionConfiguration">
             <bean class="org.apache.ignite.configuration.DataRegionConfiguration">

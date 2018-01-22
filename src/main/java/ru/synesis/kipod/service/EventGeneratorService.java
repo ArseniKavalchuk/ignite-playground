@@ -4,7 +4,6 @@ import static ru.synesis.kipod.service.EventGeneratorUtil.generateEvents;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
@@ -52,7 +51,7 @@ public class EventGeneratorService implements ApplicationRunner {
             if (log.isInfoEnabled()) log.info("Ignite is not active. Activating...");
             ignite.active(true);
         }
-        
+        cacheConfig.setAffinity(new CustomAffinityFunction());
         cache = ignite.getOrCreateCache(cacheConfig);
         cacheReady.set(true);
         publisher.publishEvent(new CacheReadyEvent(cacheConfig.getName()));
